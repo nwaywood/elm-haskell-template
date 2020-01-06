@@ -17,8 +17,8 @@ type Route
 routeParser : Parser (Route -> a) a
 routeParser =
     oneOf
-        [ map Home (s "home")
-        , map Home top
+        [ map Home top
+        , map Home (s "home")
         , map About (s "about")
         ]
 

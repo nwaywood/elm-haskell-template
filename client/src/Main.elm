@@ -1,4 +1,4 @@
-module Main exposing (..)
+module Main exposing (Article, ArticleStatus(..), Model, Msg(..), Page, articleDecoder, articlesDecoder, buildPage, edges, getArticles, header, init, main, parseHttpError, showArticle, showArticles, subscriptions, update, view, viewAboutPage, viewHomePage, viewLink, viewNotFound)
 
 import Browser
 import Browser.Navigation as Nav
@@ -55,7 +55,7 @@ type alias Article =
 
 init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
 init flags url key =
-    ( Model key url Router.NotFound Loading, getArticles )
+    ( Model key url (Router.fromUrl url) Loading, getArticles )
 
 
 
