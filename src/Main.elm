@@ -63,6 +63,7 @@ init flags url key =
 type Msg
     = LinkClicked Browser.UrlRequest
     | UrlChanged Url.Url
+    | RefreshList
     | GotArticles (Result Http.Error (List Article))
 
 
@@ -76,6 +77,9 @@ update msg model =
 
                 Browser.External href ->
                     ( model, Nav.load href )
+
+        RefreshList ->
+            ( { model | articles = Loading }, getArticles )
 
         UrlChanged url ->
             ( { model | route = fromUrl url }, Cmd.none )
@@ -137,19 +141,13 @@ header =
         ]
 
 
-template : Element msg -> Element msg
-template content =
-    column []
-        [ header
-        , content
-        ]
-
-
-viewHomePage : Model -> Page msg
+viewHomePage : Model -> Page Msg
 viewHomePage model =
     buildPage "Home Page"
-        (template
-            (case model.articles of
+        (column []
+            [ header
+            , Input.button [] { onPress = Just RefreshList, label = el [] (text "Refresh") }
+            , case model.articles of
                 Success a ->
                     showArticles a
 
@@ -158,7 +156,7 @@ viewHomePage model =
 
                 Loading ->
                     text "Loading"
-            )
+            ]
         )
 
 
@@ -194,16 +192,20 @@ showArticle article =
 viewAboutPage : Model -> Page msg
 viewAboutPage model =
     buildPage "About"
-        (template
-            (text "About page")
+        (column []
+            [ header
+            , text "About page"
+            ]
         )
 
 
 viewNotFound : Model -> Page msg
 viewNotFound model =
     buildPage "Not Found"
-        (template
-            (text "Not found")
+        (column []
+            [ header
+            , text "Not found"
+            ]
         )
 
 
