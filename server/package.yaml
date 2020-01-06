@@ -23,6 +23,8 @@ dependencies:
 - base >= 4.7 && < 5
 - scotty
 - wai-middleware-static 
+- req
+- aeson
 
 library:
   source-dirs: src
