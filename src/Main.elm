@@ -3,6 +3,8 @@ module Main exposing (..)
 import Browser
 import Browser.Navigation as Nav
 import Element exposing (..)
+import Element.Border as Border
+import Element.Font as Font
 import Element.Input as Input
 import Html exposing (Html)
 import Http
@@ -135,7 +137,7 @@ buildPage title body =
 header : Element msg
 header =
     column []
-        [ text "Header"
+        [ el [ paddingEach { edges | bottom = 12 }, Font.size 28 ] <| text "Header"
         , viewLink "/home"
         , viewLink "/about"
         ]
@@ -144,9 +146,9 @@ header =
 viewHomePage : Model -> Page Msg
 viewHomePage model =
     buildPage "Home Page"
-        (column []
+        (column [ spacing 12 ]
             [ header
-            , Input.button [] { onPress = Just RefreshList, label = el [] (text "Refresh") }
+            , Input.button [ Border.rounded 3, Border.width 1, Border.color <| rgb255 200 200 200, padding 12 ] { onPress = Just RefreshList, label = el [] (text "Refresh") }
             , case model.articles of
                 Success a ->
                     showArticles a
@@ -181,18 +183,18 @@ parseHttpError e =
 
 showArticles : List Article -> Element msg
 showArticles articles =
-    column [] (List.map showArticle articles)
+    column [ spacing 6 ] (List.map showArticle articles)
 
 
 showArticle : Article -> Element msg
 showArticle article =
-    column [] [ text article.title, text article.author ]
+    column [ Border.widthEach { edges | bottom = 1 }, paddingEach { edges | bottom = 6 } ] [ text article.title, text article.author ]
 
 
 viewAboutPage : Model -> Page msg
 viewAboutPage model =
     buildPage "About"
-        (column []
+        (column [ spacing 12 ]
             [ header
             , text "About page"
             ]
@@ -202,7 +204,7 @@ viewAboutPage model =
 viewNotFound : Model -> Page msg
 viewNotFound model =
     buildPage "Not Found"
-        (column []
+        (column [ spacing 12 ]
             [ header
             , text "Not found"
             ]
@@ -215,6 +217,14 @@ viewLink path =
         { url = path
         , label = text path
         }
+
+
+edges =
+    { top = 0
+    , right = 0
+    , left = 0
+    , bottom = 0
+    }
 
 
 
