@@ -234,7 +234,7 @@ edges =
 getArticles : Cmd Msg
 getArticles =
     Http.get
-        { url = "https://hn.algolia.com/api/v1/search_by_date?tags=story&hitsPerPage=50"
+        { url = "/api/articles"
         , expect = Http.expectJson GotArticles articlesDecoder
         }
 

@@ -25,6 +25,7 @@ dependencies:
 - wai-middleware-static 
 - req
 - aeson
+- text
 
 library:
   source-dirs: src
