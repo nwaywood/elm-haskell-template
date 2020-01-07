@@ -241,7 +241,7 @@ getArticles =
 
 articlesDecoder : Decoder (List Article)
 articlesDecoder =
-    field "hits" (Json.Decode.list articleDecoder)
+    Json.Decode.list articleDecoder
 
 
 articleDecoder : Decoder Article

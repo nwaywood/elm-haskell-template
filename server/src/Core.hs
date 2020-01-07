@@ -7,13 +7,17 @@ module Core
 import Web.Scotty as S
 import Network.Wai.Middleware.Static (staticPolicy, addBase)
 import Network.HTTP.Req
-import Data.Aeson.Parser
-import Data.Aeson
+import Data.Aeson.Parser 
+import Data.Aeson 
+import Data.Aeson.Types
 import Data.Monoid (mconcat)
 import Control.Monad.IO.Class
 import GHC.Generics 
 import Debug.Trace (trace)
-import Data.Text
+import Data.Text (Text)
+import Control.Applicative (empty)
+
+ 
 
 
 run = scotty 3000 $ do 
@@ -30,15 +34,15 @@ run = scotty 3000 $ do
 --getArticles :: HttpResponseBody (JsonResponse Articles)
 getArticles = runReq defaultHttpConfig $ do
     bs <- (req GET (https "hn.algolia.com" /: "api" /: "v1" /: "search_by_date") NoReqBody jsonResponse ("tags" =: ("story" :: Text)))
-    let testObj =  (  responseBody bs :: Articles)
-    trace ("Test Object" ++ show testObj) (liftIO $ pure testObj)
+    -- let testObj = (  responseBody bs :: Articles)
+    let maybeObj = parseMaybe articles (responseBody bs) 
+    let obj =  getMaybeObj maybeObj
+    trace ("Test Object" ++ show obj) (liftIO $ pure obj)
     
 
-thing  = "test"
-
-data Articles = Articles {
-        hits :: [Article]
-} deriving (Generic, Show)
+getMaybeObj :: Maybe [Article] -> [Article] 
+getMaybeObj (Just a ) = a 
+getMaybeObj _ = [Article "test" "test" ] 
 
 
 data Article = Article {
@@ -47,12 +51,18 @@ data Article = Article {
 } deriving (Generic, Show)
 
 
+articles :: Value -> Parser [Article]
+articles = withObject "articles" $ \v -> v .: "hits" 
 
 
-instance FromJSON Articles
+instance FromJSON Article where
+     parseJSON (Object v) = Article <$>
+                            v .: "title" <*>
+                            v .: "author"
+     -- A non-Object value is of the wrong type, so fail.
+     parseJSON _          = empty 
 
-instance FromJSON Article
+
 
 instance ToJSON Article 
 
-instance ToJSON Articles 
