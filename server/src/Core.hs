@@ -33,15 +33,17 @@ data Article = Article {
 run = scotty 3000 $ do 
 
     middleware $ staticPolicy $ addBase "../client/static"
-
+    
     get "/api/articles" $ do
         res <- getArticles 
         handleResponse res
-
+    -- Matches any APi route that does not exist
     matchAny (regex "/api/.*") $ do
+        path <- param "0"
         status status404
-        html $ fromString $ "<h1>Can't find .</h1>" 
+        html $ fromString $ "<h1>Can't find API path:  " ++ path ++ "</h1>" 
 
+    -- Matches every unmatched get route to return frontend.
     get (regex ".*") $ do 
         file "../client/static/index.html"
 
