@@ -18,37 +18,41 @@ import Data.Text (Text)
 import Data.Text.Lazy (pack)
 import Control.Applicative (empty)
 
+
+
  
-
-
-run = scotty 3000 $ do 
-    middleware $ staticPolicy $ addBase "../client/index.html"
-    get "/api/articles" $ do
-        res <- getArticles
-        handleResponse res
-
-
--- getArticles :: [Article]
-getArticles = runReq defaultHttpConfig $ do
-    bs <- (req GET (https "hn.algolia.com" /: "api" /: "v1" /: "search_by_date") NoReqBody jsonResponse ("tags" =: ("story" :: Text)))
-    let result = parse articles (responseBody bs)
-    liftIO $ pure result
-    
-
-handleResponse :: Result [Article] -> ActionM ()
-handleResponse (Error str) = raise (pack str)
-handleResponse (Success a) = S.json a
-
-
 data Article = Article {
         title :: Text
         , author :: Text
 } deriving (Generic, Show)
 
 
+
+
+run = scotty 3000 $ do 
+    middleware $ staticPolicy $ addBase "../client/index.html"
+    get "/api/articles" $ do
+        res <- getArticles 
+        handleResponse res
+
+
+getArticles :: ActionM (Result [Article])
+getArticles = runReq defaultHttpConfig $ do
+    bs <- (req GET (https "hn.algolia.com" /: "api" /: "v1" /: "search_by_date") NoReqBody jsonResponse ("tags" =: ("story" :: Text)))
+    let result = parse articles (responseBody bs)
+    liftIO $ pure result
+
+
+handleResponse :: Result [Article] -> ActionM ()
+handleResponse (Error str) = raise (pack str)
+handleResponse (Success a) = S.json a
+
+
+
+-- JSON Parsing 
+
 articles :: Value -> Parser [Article]
 articles = withObject "articles" $ \v -> v .: "hits" 
-
 
 instance FromJSON Article where
      parseJSON (Object v) = Article <$>
