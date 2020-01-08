@@ -18,7 +18,7 @@ Or:
 
 #### Production Build 
 
-`$ elm make src/Main.elm`
+`$ elm make src/Main.elm --output=static/index.html`
 
 ### Server 
 

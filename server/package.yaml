@@ -26,6 +26,7 @@ dependencies:
 - req
 - aeson
 - text
+- http-types
 
 library:
   source-dirs: src

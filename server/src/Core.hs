@@ -17,7 +17,8 @@ import Debug.Trace (trace)
 import Data.Text (Text)
 import Data.Text.Lazy (pack)
 import Control.Applicative (empty)
-
+import Network.HTTP.Types (status404)
+import Data.String (fromString)
 
 
  
@@ -30,10 +31,19 @@ data Article = Article {
 
 
 run = scotty 3000 $ do 
-    middleware $ staticPolicy $ addBase "../client/index.html"
+
+    middleware $ staticPolicy $ addBase "../client/static"
+
     get "/api/articles" $ do
         res <- getArticles 
         handleResponse res
+
+    matchAny (regex "/api/.*") $ do
+        status status404
+        html $ fromString $ "<h1>Can't find .</h1>" 
+
+    get (regex ".*") $ do 
+        file "../client/static/index.html"
 
 
 getArticles :: ActionM (Result [Article])
@@ -50,7 +60,6 @@ handleResponse (Success a) = S.json a
 
 
 -- JSON Parsing 
-
 articles :: Value -> Parser [Article]
 articles = withObject "articles" $ \v -> v .: "hits" 
 
