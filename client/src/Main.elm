@@ -197,6 +197,7 @@ viewAboutPage model =
         (column [ spacing 12 ]
             [ header
             , text "About page"
+            , image [] { src = "/static/elm-logo.png", description = "Elm-Logo-Test" }
             ]
         )
 

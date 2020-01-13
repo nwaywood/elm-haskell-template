@@ -39,17 +39,11 @@ Or use this repository as a github template!
 
 From the client folder
 
-`$ elm-live src/Main.elm --proxy-host=http://localhost:3000 --proxy-prefix=/`
+`$ elm-live src/Main.elm --proxy-host=http://localhost:3000/api --proxy-prefix=/api --pushstate`
 
 Default port is 8000 for elm-live
 
 Note: Node version v10 or greater for elm-live. 
-
-Or:
-
-`$ elm reactor src/Main.elm  --port=3000`
-
-Running either will proxy API calls to the haskell server.
 
 Then run 
 

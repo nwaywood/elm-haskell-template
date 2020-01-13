@@ -32,7 +32,7 @@ data Article = Article {
 
 run = scotty 3000 $ do 
 
-    middleware $ staticPolicy $ addBase "../client/static"
+    middleware $ staticPolicy $ addBase "../client"
     
     get "/api/articles" $ do
         res <- getArticles 
@@ -45,7 +45,7 @@ run = scotty 3000 $ do
 
     -- Matches every unmatched get route to return frontend.
     get (regex ".*") $ do 
-        file "../client/static/index.html"
+        file "../client/index.html"
 
 
 getArticles :: ActionM (Result [Article])
